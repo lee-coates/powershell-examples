@@ -24,16 +24,22 @@ Function Get-TopCPUProcesses {
     )
 
     # Check if the parameter has been passed
-    if ($ComputerName.Count = 0) 
+    if ($ComputerName.Count -eq 0) 
     { 
         Get-Process | Group-Object Name | Sort-Object -Descending CPU | Select-Object -First $NumberOfProcesses
     }
     else {
         foreach ($computer in $ComputerName.GetEnumerator())
         {
-            Invoke-Command -ComputerName $computer -ScriptBlock {
-                Get-Process | Group-Object Name | Sort-Object -Descending CPU | Select-Object -First $NumberOfProcesses
+            Write-Host $computer
+            $results = Invoke-Command -ComputerName $computer -ScriptBlock { 
+                param (
+                    [int]$NumberOfProcesses
+                )
+                return Get-Process | Group-Object Name | Sort-Object -Descending CPU | Select-Object -First $NumberOfProcesses | Out-String
             }
+            
+            Write-Host $results
         }
     }
 
