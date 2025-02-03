@@ -1,1 +1,3 @@
 scripts/tests/
+/testoutput/
+*.log
